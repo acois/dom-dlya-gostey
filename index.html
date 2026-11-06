@@ -1,0 +1,1053 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- демо-версия для показа: не индексировать. Убрать перед запуском настоящего сайта -->
+<meta name="robots" content="noindex, nofollow">
+<title>Дом для гостей — гостевой дом в Горячем Ключе</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap">
+<style>
+/* Сведено из двух референсов: «Тихая гавань» (стеклянное меню-пилюля, огромный строчный заголовок,
+   стеклянные карточки цифр, вырез с кнопкой) + «Лесной берег» (тёмная тонировка, ряд /1–/4, бежевая карточка) */
+:root {
+  --page: #f2f0ec;
+  --night: #121410;
+  --white: #ffffff;
+  --cream: #efe7dc;
+  --sand: #d8c4a2;
+  --tan: #c49a6c;
+  --tan-dark: #a87d50;
+  --wine: #7b2d3a;
+  --gold: #b3905a;
+  --grey: #8d8b87;
+  --ink: #23241f;
+  --glass: rgba(255, 255, 255, .12);
+  --glass-line: rgba(255, 255, 255, .38);
+  --font: "Montserrat", "Segoe UI", Arial, sans-serif;
+  --side: clamp(16px, 4.5vw, 64px);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--page); color: var(--ink); font-family: var(--font); font-size: 14px; line-height: 1.45; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 1px solid var(--tan); outline-offset: 3px; border-radius: 999px; }
+
+/* ---------- фото-сцена со скруглённым низом ---------- */
+/* сетка: слева заголовок → подзаголовок → преимущества, справа карточки; снизу место под вырез с кнопкой */
+.hero {
+  position: relative; isolation: isolate; color: var(--white);
+  height: 100vh; height: 100svh; min-height: 600px; max-height: 1000px;
+  display: grid; grid-template-columns: minmax(0, 1fr) 150px; grid-template-rows: 1fr auto; column-gap: clamp(24px, 4vw, 64px);
+  padding: clamp(100px, 14vh, 150px) var(--side) 96px calc(var(--side) + 10px);
+  border-radius: 0 0 40px 40px; overflow: hidden; background: var(--night);
+}
+/* слои: фото → облако → тот же кадр без неба (дом и деревья) → тонировка; так облако уходит за дом */
+.hero__img.hero__img--front { z-index: -2; }
+.hero__img { position: absolute; inset: 0; z-index: -4; width: 100%; height: 100%; object-fit: cover; object-position: 55% 50%; filter: brightness(1) saturate(1.1); animation: settle 2.4s ease-out both; }
+@keyframes settle { from { transform: scale(1.05); } to { transform: none; } }
+.hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(18, 20, 16, .45) 0%, rgba(18, 20, 16, .04) 36%, rgba(18, 20, 16, .1) 60%, rgba(18, 20, 16, .78) 100%),
+    linear-gradient(90deg, rgba(18, 20, 16, .42) 0%, rgba(18, 20, 16, 0) 55%);
+}
+
+/* облако в небе плывёт и уходит за дом и деревья (поверх него лежит кадр без неба) */
+.cloud { position: absolute; pointer-events: none; user-select: none; height: auto; }
+.cloud--sky { z-index: -3; top: -22%; right: -26%; width: min(80vw, 1150px); opacity: 1; filter: drop-shadow(0 0 12px rgba(255, 255, 255, .5)); animation: drift 25s ease-in-out infinite alternate; }
+@keyframes drift { from { transform: translateX(0); } to { transform: translateX(-14vw); } }
+
+/* ---------- стеклянное меню-пилюля, пункты равномерно по всей ширине ---------- */
+.nav {
+  position: fixed; z-index: 50; top: 24px; left: var(--side); right: var(--side); color: var(--white);
+  transition: background .35s, border-color .35s, box-shadow .35s, color .35s;
+  display: flex; align-items: center; gap: 12px;
+  height: 58px; padding: 0 8px 0 12px; border-radius: 999px;
+  background: var(--glass); border: 1px solid var(--glass-line);
+  backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  font-size: 13px;
+}
+.nav.is-stuck { top: 12px; left: 50%; right: auto; width: min(780px, calc(100% - 2 * var(--side))); height: 44px; padding: 0 5px 0 10px; transform: translateX(-50%); font-size: 12px; color: var(--ink); background: rgba(242, 240, 236, .72); border-color: rgba(35, 36, 31, .08); box-shadow: 0 6px 20px rgba(40, 30, 20, .06); }
+.nav.is-stuck .nav__btn { height: 34px; padding: 0 16px; font-size: 12px; background: var(--wine); color: var(--white); }
+.nav.is-stuck .nav__call, .nav.is-stuck .burger { width: 34px; height: 34px; color: var(--ink); border-color: rgba(35, 36, 31, .15); }
+html { scroll-padding-top: 100px; }
+.nav__links { flex: 1; display: flex; align-items: center; justify-content: space-evenly; }
+.nav__links a { white-space: nowrap; opacity: .92; padding: 8px 4px; transition: opacity .2s; }
+.nav__links a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1px; }
+/* мобильные круглые кнопки в меню: бургер слева, телефон справа перед «Забронировать» */
+.nav__call, .burger { display: none; flex: none; width: 42px; height: 42px; padding: 0; border-radius: 50%; border: 1px solid var(--glass-line); background: transparent; color: var(--white); place-items: center; transition: background .2s; }
+.nav__call:hover, .burger:hover { background: rgba(255, 255, 255, .14); }
+.nav__call svg { width: 18px; height: 18px; }
+.nav__btn { height: 42px; display: inline-flex; align-items: center; padding: 0 24px; border-radius: 999px; background: var(--cream); color: var(--ink); font-weight: 500; white-space: nowrap; transition: background .2s; }
+.nav__btn:hover { background: var(--white); }
+.burger svg { width: 18px; height: 18px; }
+
+/* ---------- огромный строчный заголовок ---------- */
+.title { grid-column: 1; grid-row: 1; align-self: start; position: relative; z-index: 2; }
+h1 {
+  margin: 0; font-weight: 400; text-transform: lowercase;
+  font-size: clamp(60px, min(12.4vw, 21vh), 210px); line-height: .9; letter-spacing: -.005em;
+}
+h1 .row { display: block; white-space: nowrap; }
+h1 .row > span { display: inline-block; animation: up 1.1s cubic-bezier(.2, .7, .1, 1) both; }
+h1 .row:nth-child(2) > span { animation-delay: .1s; padding-left: .58em; }
+.title__tag { display: inline-block; margin-left: .45em; vertical-align: .9em; font-size: clamp(14px, 1.5vw, 20px); letter-spacing: 0; font-weight: 300; line-height: 1.2; text-transform: none; white-space: normal; animation: fade 1s ease .6s both; }
+.title__tag--m { display: none; }
+@keyframes up { from { opacity: 0; transform: translateY(40%); } to { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* подзаголовок идёт в потоке под заголовком — не наезжает на него */
+.lead { max-width: 300px; margin: clamp(22px, 3.5vh, 40px) 0 0; padding-left: 4px; font-size: 15px; line-height: 1.5; animation: fade 1s ease .7s both; }
+
+/* ---------- справа: стеклянные карточки + бежевая карточка ---------- */
+.side { grid-column: 2; grid-row: 1 / 3; align-self: center; position: relative; z-index: 3; display: flex; flex-direction: column; gap: 10px; }
+.stat {
+  height: clamp(96px, 15vh, 126px); padding: clamp(14px, 2.2vh, 18px) 20px; border-radius: 22px; display: flex; flex-direction: column; justify-content: space-between;
+  background: var(--glass); border: 1px solid var(--glass-line);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  animation: fade .9s ease both;
+}
+.stat:nth-child(1) { animation-delay: .8s; }
+.stat:nth-child(2) { animation-delay: .95s; }
+.stat:nth-child(3) { animation-delay: 1.1s; }
+.stat b { font-size: 34px; font-weight: 300; line-height: 1; letter-spacing: -.02em; }
+.stat span { font-size: 13px; line-height: 1.25; opacity: .92; }
+/* бежевая карточка-ссылка: цена в том же ритме, что и цифры выше, стрелка в углу */
+.stat--sand { position: relative; background: var(--sand); border-color: var(--sand); color: var(--ink); backdrop-filter: none; -webkit-backdrop-filter: none; transition: background .2s; }
+.stat--sand:hover { background: var(--cream); }
+.stat--sand b { font-size: 30px; white-space: nowrap; }
+.stat--sand b .rub { font-size: inherit; opacity: 1; }
+.stat--sand .rub-m { display: none; }
+.stat--sand small { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 400; letter-spacing: 0; }
+.stat--sand i { position: absolute; bottom: 10px; right: 10px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; border: 1px solid rgba(35, 36, 31, .3); transition: background .2s, color .2s, transform .3s; }
+.stat--sand i svg { width: 12px; height: 12px; }
+.stat--sand:hover i { background: var(--ink); color: var(--sand); transform: rotate(45deg); }
+
+/* ---------- преимущества /01–/04: только текст, вертикальные линии между пунктами, бежевый номер ---------- */
+.points {
+  grid-column: 1; grid-row: 2; position: relative; z-index: 2; margin: clamp(16px, 3vh, 36px) 0 0; padding: 0; list-style: none;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  animation: fade .9s ease .9s both;
+}
+.points li { display: flex; flex-direction: column; gap: 4px; padding: 2px 28px; }
+.points li:first-child { padding-left: 0; }
+.points li + li { border-left: 1px solid rgba(255, 255, 255, .35); }
+.points em { margin-bottom: 14px; font-style: normal; font-size: 13px; font-weight: 500; letter-spacing: .08em; color: var(--sand); }
+.points b { font-size: 15px; font-weight: 500; line-height: 1.25; }
+.points span { font-size: 13px; line-height: 1.3; opacity: .75; }
+
+/* ---------- кнопка целиком в вырезе, её низ совпадает с нижней границей фото ---------- */
+:root { --cta-w: min(340px, calc(100vw - 96px)); --cta-h: 58px; --notch-pad: 10px; }
+/* вырез лежит поверх фото (вне его обрезки), заходит на 3px ниже края — без швов;
+   плавные внутренние скругления — векторные уголки, а не градиент */
+.cta-wrap { position: relative; z-index: 6; width: var(--cta-w); margin: calc(var(--cta-h) * -1) auto 0; }
+.notch {
+  position: absolute; z-index: 0; top: calc(var(--notch-pad) * -1); bottom: -3px;
+  left: calc(var(--notch-pad) * -1); right: calc(var(--notch-pad) * -1);
+  background: var(--page); border-radius: calc(var(--cta-h) / 2 + var(--notch-pad)) calc(var(--cta-h) / 2 + var(--notch-pad)) 0 0;
+}
+/* размер уголков-скруглений задаётся --fil, чтобы тот же вырез работал и в маленьком варианте */
+.notch::before, .notch::after { content: ""; position: absolute; bottom: 0; width: calc(var(--fil, 28px) + 1px); height: calc(var(--fil, 28px) + 3px); background-repeat: no-repeat; background-size: 100% 100%; }
+.notch::before { left: calc(var(--fil, 28px) * -1); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 29 31'%3E%3Cpath d='M0 28A28 28 0 0 0 28 0H29V31H0Z' fill='%23f2f0ec'/%3E%3C/svg%3E"); }
+.notch::after { right: calc(var(--fil, 28px) * -1); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 29 31'%3E%3Cpath d='M29 28A28 28 0 0 1 1 0H0V31H29Z' fill='%23f2f0ec'/%3E%3C/svg%3E"); }
+.cta { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; height: var(--cta-h); padding: 0 6px 0 28px; border-radius: 999px; border: 1px solid rgba(35, 36, 31, .12); background: var(--white); color: var(--ink); font-size: 14px; font-weight: 500; transition: border-color .2s; animation: fade 1s ease 1s both; }
+.cta:hover { border-color: rgba(35, 36, 31, .3); }
+.cta__arrow { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--tan); color: var(--white); transition: background .2s, transform .3s; }
+.cta:hover .cta__arrow { background: var(--tan-dark); transform: rotate(-45deg); }
+.cta__arrow svg { width: 18px; height: 18px; }
+/* тот же вырез с кнопкой повторяется по всему сайту: ставится сразу после фото/тёмного блока */
+.cta-wrap--rep .cta { animation: none; }
+.cta-wrap--sm { --cta-w: min(210px, 82%); --cta-h: 46px; --notch-pad: 7px; --fil: 20px; }
+.cta-wrap--sm .cta { padding-left: 20px; font-size: 13px; }
+.cta-wrap--sm .cta__arrow { width: 36px; height: 36px; }
+.cta-wrap--sm .cta__arrow svg { width: 15px; height: 15px; }
+
+/* ---------- блок «о доме»: шапка как «о клубе» + тело как «Мы создаём идеальные условия» ---------- */
+.about { position: relative; isolation: isolate; overflow: hidden; padding: clamp(40px, 7vh, 70px) var(--side) clamp(64px, 10vh, 110px) calc(var(--side) + 10px); }
+/* шапка раздела — общая для всех блоков: огромный серый строчный заголовок + строка заглавными + звёздочка */
+.head { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: clamp(24px, 5vw, 80px); }
+.head h2 { margin: 0; font-weight: 400; font-size: clamp(56px, 9vw, 130px); line-height: .8; letter-spacing: -.045em; color: var(--wine); }
+.head p { margin: 0; max-width: 640px; font-size: clamp(16px, 1.7vw, 24px); line-height: 1.3; text-transform: uppercase; letter-spacing: .01em; }
+.head p span { color: var(--wine); }
+
+/* волны — общий фоновый элемент сайта: ставить в любой блок с position: relative; isolation: isolate */
+.waves { position: absolute; z-index: -2; left: 0; right: 0; top: 46%; width: 100%; height: clamp(260px, 34vw, 480px); color: #e7e3dc; pointer-events: none; }
+
+.about__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 48%); align-items: start; gap: clamp(32px, 5vw, 80px); margin-top: clamp(48px, 9vh, 96px); }
+.about__text h3 { margin: 0; font-weight: 400; font-size: clamp(26px, 2.6vw, 36px); line-height: 1.2; letter-spacing: -.01em; }
+.about__text h3 span { color: var(--wine); }
+.about__text > p { margin: 18px 0 0; max-width: 540px; font-size: 15px; line-height: 1.65; color: #55564f; }
+.about__text > p .text-link { display: flex; width: fit-content; margin-top: 22px; }
+.text-link { display: inline-flex; align-items: center; gap: 6px; color: var(--wine); font-weight: 500; white-space: nowrap; border-bottom: 1px solid rgba(123, 45, 58, .35); transition: border-color .2s; }
+.text-link:hover { border-bottom-color: var(--wine); }
+.text-link svg { width: 14px; height: 14px; transition: transform .25s; }
+.text-link:hover svg { transform: translateX(3px); }
+.tags { display: flex; flex-wrap: wrap; gap: 10px; margin: 28px 0 0; padding: 0; list-style: none; }
+.tags li { height: 36px; display: inline-flex; align-items: center; padding: 0 18px; border-radius: 999px; background: rgba(179, 144, 90, .14); color: #5a4a35; font-size: 13px; }
+.nums { display: flex; flex-wrap: wrap; gap: 18px clamp(28px, 4.5vw, 64px); margin: 36px 0 0; padding: 0; list-style: none; }
+.nums li { padding: 0; }
+.nums b { display: block; color: var(--wine); font-size: clamp(30px, 2.8vw, 40px); font-weight: 300; line-height: 1; letter-spacing: -.02em; }
+.nums span { display: block; margin-top: 10px; font-size: 13px; line-height: 1.3; color: #55564f; }
+
+/* фото в арке с тонкой золотой аркой-контуром позади, цитата хозяев поверх низа */
+.about__media { position: relative; justify-self: end; width: min(100%, 600px); margin: 0 0 0 auto; }
+
+.about__pics { position: relative; aspect-ratio: 1 / 1.08; }
+.about__arch { position: absolute; top: 0; right: 0; width: 62%; aspect-ratio: 3 / 4; border-radius: 22px; overflow: hidden; background: var(--night); }
+.about__arch--sm { top: auto; right: auto; bottom: 0; left: 0; width: 42%; aspect-ratio: 893 / 1937; outline: 6px solid var(--page); box-shadow: 0 18px 40px rgba(40, 30, 20, .18); }
+.about__arch img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; transition: transform .8s cubic-bezier(.2, .7, .1, 1); }
+.about__media:hover .about__arch img { transform: scale(1.04); }
+.about__quote { max-width: 860px; margin: clamp(56px, 9vh, 96px) auto 0; padding: 0; text-align: center; font-size: clamp(22px, 2.3vw, 32px); font-weight: 300; line-height: 1.35; }
+.about__quote::before { content: "“"; display: block; height: 40px; font-size: 72px; line-height: 1; color: var(--wine); }
+.about__quote cite { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; font-style: normal; font-size: 13px; font-weight: 500; color: var(--gold); }
+.about__quote cite::before { content: ""; width: 24px; height: 1px; background: var(--gold); }
+/* ---------- общие для следующих блоков ---------- */
+.sec { position: relative; isolation: isolate; overflow: hidden; padding: clamp(64px, 10vh, 110px) var(--side) clamp(64px, 10vh, 110px) calc(var(--side) + 10px); }
+.sec .waves { top: 30%; }
+.lede { margin: 18px 0 0; max-width: 540px; font-size: 15px; line-height: 1.65; color: #55564f; }
+h3.sub { margin: 0; font-weight: 400; font-size: clamp(26px, 2.6vw, 36px); line-height: 1.2; letter-spacing: -.01em; }
+h3.sub span { color: var(--wine); }
+/* кнопка-пилюля с рыжим кругом-стрелкой, как «Забронировать отдых» на первом экране */
+.pill { display: inline-flex; align-items: center; justify-content: space-between; gap: 16px; height: 56px; padding: 0 6px 0 26px; border-radius: 999px; border: 1px solid rgba(35, 36, 31, .14); background: var(--white); color: var(--ink); font-size: 14px; font-weight: 500; white-space: nowrap; transition: border-color .2s; }
+.pill:hover { border-color: rgba(35, 36, 31, .35); }
+.pill i { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--tan); color: var(--white); transition: background .2s, transform .3s; }
+.pill:hover i { background: var(--tan-dark); transform: rotate(-45deg); }
+.pill i svg { width: 18px; height: 18px; }
+.pill--ghost { background: transparent; padding-right: 26px; }
+
+
+/* живая зелень: по одному растению на блок, у края, под текстом */
+.plant { position: absolute; z-index: -1; height: auto; pointer-events: none; user-select: none; }
+.plant--olive { top: -20px; right: clamp(-40px, -2vw, -16px); width: clamp(120px, 13vw, 200px); transform: rotate(-8deg); }
+.plant--euca { left: clamp(-170px, -9vw, -90px); bottom: -70px; width: clamp(220px, 22vw, 320px); transform: rotate(-30deg); opacity: .9; }
+.plant--jasmine { bottom: -50px; right: clamp(-80px, -4vw, -30px); width: clamp(200px, 19vw, 280px); transform: rotate(-12deg); }
+.plant--sprig { bottom: -40px; right: clamp(-140px, -7vw, -70px); width: clamp(220px, 21vw, 320px); transform: rotate(-20deg); opacity: .85; }
+.plant--branch { bottom: -60px; right: clamp(-90px, -4vw, -30px); width: clamp(170px, 16vw, 250px); transform: rotate(-14deg); opacity: .85; }
+
+/* ---------- номера ---------- */
+.rooms__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2.2vw, 32px); margin-top: clamp(48px, 8vh, 88px); }
+.room { display: flex; flex-direction: column; }
+.room__img { position: relative; aspect-ratio: 1; border-radius: 22px; overflow: hidden; background: var(--night); }
+.room__img img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2, .7, .1, 1); }
+.room:hover .room__img img { transform: scale(1.04); }
+/* листалка фото в карточке номера */
+.gal { display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
+.gal::-webkit-scrollbar { display: none; }
+.gal img { flex: 0 0 100%; scroll-snap-align: start; }
+.room:hover .gal img { transform: none; }
+.gal__count { position: absolute; top: 14px; right: 14px; height: 32px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 999px; font-size: 12px; font-weight: 500; color: var(--white); background: var(--glass); border: 1px solid var(--glass-line); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.gal__btn { position: absolute; top: 50%; width: 40px; height: 40px; margin-top: -20px; display: grid; place-items: center; border: 1px solid var(--glass-line); border-radius: 50%; background: var(--glass); color: var(--white); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); cursor: pointer; transition: background .2s, opacity .2s; }
+.gal__btn:hover { background: rgba(255, 255, 255, .3); }
+.gal__btn svg { width: 18px; height: 18px; }
+.gal__btn--prev { left: 12px; }
+.gal__btn--next { right: 12px; }
+.gal__btn:disabled { opacity: 0; pointer-events: none; }
+.room__img em { position: absolute; top: 14px; left: 14px; height: 32px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; font-style: normal; font-size: 12px; font-weight: 500; letter-spacing: .08em; color: var(--white); background: var(--glass); border: 1px solid var(--glass-line); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.room h3 { margin: 22px 0 0; font-weight: 400; font-size: 22px; line-height: 1.2; }
+.room p { margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: #55564f; }
+.room .tags { margin-top: 16px; gap: 8px; }
+.room .tags li { height: 30px; padding: 0 13px; font-size: 12px; }
+.room__foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; }
+.room__body { flex: 1; display: flex; flex-direction: column; }
+.room__body > :nth-last-child(2) { margin-bottom: 18px; }
+.room__price b { font-size: 20px; font-weight: 500; color: var(--wine); }
+.room__price span { display: block; font-size: 12px; color: var(--grey); }
+.room__go { flex: none; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--tan); color: var(--white); transition: background .2s, transform .3s; }
+.room__go:hover { background: var(--tan-dark); transform: rotate(-45deg); }
+.room__go svg { width: 18px; height: 18px; }
+/* шестая ячейка сетки — подсказка с телефоном */
+.room--ask { justify-content: space-between; gap: 18px; padding: clamp(24px, 2.6vw, 36px); border-radius: 22px; background: var(--sand); }
+.room--ask b { font-size: clamp(24px, 2.2vw, 30px); font-weight: 400; line-height: 1.2; color: var(--wine); }
+.room--ask p { margin: 0; flex: 1; font-size: 15px; color: var(--ink); }
+.room--ask .pill { align-self: flex-start; }
+.room--ask { position: relative; }
+.room--ask > :not(.plant) { position: relative; z-index: 1; }
+.room--video { background: rgba(255, 255, 255, .35); border: 1px solid rgba(35, 36, 31, .18); }
+.plant--leaf { z-index: 0; left: 2%; bottom: -84px; width: 140%; max-width: none; filter: drop-shadow(0 8px 14px rgba(60,40,20,.16)); }
+
+/* в номере: фото в арке + круглое фото с золотым кольцом, справа список /01–/10 */
+.inroom { position: relative; display: grid; grid-template-columns: minmax(280px, 40%) minmax(0, 1fr); gap: clamp(40px, 8vw, 120px); align-items: center; margin-top: clamp(80px, 13vh, 140px); }
+.inroom__media { position: relative; width: min(100%, 420px); margin-left: 16px; }
+
+.inroom__arch { aspect-ratio: 1; border-radius: 22px; overflow: hidden; }
+.inroom__arch img, .inroom__round img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.inroom__round { position: absolute; right: -28px; bottom: -36px; width: 44%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; border: 8px solid var(--page); }
+.inroom__round img { object-position: 60% 30%; }
+.list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px clamp(24px, 3vw, 48px); margin: 30px 0 0; padding: 0; list-style: none; counter-reset: n; }
+.list li { display: grid; grid-template-columns: 40px 1fr; counter-increment: n; }
+.list li::before { content: "/" counter(n, decimal-leading-zero); font-size: 12px; font-weight: 500; letter-spacing: .06em; color: var(--gold); padding-top: 2px; }
+.list b { display: block; font-size: 15px; font-weight: 500; line-height: 1.3; }
+.list span { display: block; margin-top: 4px; font-size: 13px; line-height: 1.4; color: #6c6d66; }
+.note-quote { margin: 30px 0 0; padding: 0 0 0 22px; border-left: 2px solid var(--wine); max-width: 560px; font-size: 15px; line-height: 1.6; }
+.note-quote cite { display: block; margin-top: 8px; font-style: normal; font-size: 12px; font-weight: 500; color: var(--gold); }
+
+/* ---------- двор: тёмная сцена со скруглёнными углами, как первый экран ---------- */
+.yard { position: relative; isolation: isolate; overflow: hidden; margin: 0 clamp(0px, 1.2vw, 16px); padding: clamp(64px, 10vh, 110px) var(--side) clamp(64px, 10vh, 110px) calc(var(--side) + 10px); border-radius: 40px; background: var(--night); color: var(--white); }
+.yard::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse at 85% 0%, rgba(84, 104, 58, .38), transparent 60%), radial-gradient(ellipse at 0% 100%, rgba(179, 144, 90, .16), transparent 55%); }
+.yard { padding-bottom: clamp(110px, 15vh, 160px); }
+.yard__body { position: relative; }
+.plant--yard-left { left: clamp(-150px, -9vw, -90px); bottom: -60px; width: clamp(220px, 20vw, 320px); transform: scaleX(-1) rotate(-8deg); opacity: .9; }
+/* видео номеров и летняя кухня во дворе */
+.tours { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 48px; margin-top: clamp(72px, 12vh, 120px); }
+.tours__link { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; }
+.tours__link p { margin: 0; max-width: 340px; color: var(--grey); font-size: 15px; line-height: 1.5; }
+.tours__row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 18px); margin-top: 28px; }
+.tours video, .yard__tiles video { display: block; width: 100%; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 22px; background: var(--night); }
+.yard__kitchen { display: grid; gap: 28px; margin-top: clamp(64px, 10vh, 110px); }
+.yard__kitchen-text { display: grid; grid-template-columns: auto minmax(0, 560px); justify-content: space-between; align-items: end; gap: 16px 48px; }
+.yard__kitchen .sub span { color: var(--sand); }
+.yard__kitchen .lede { margin: 0; }
+.yard__tiles { display: flex; align-items: flex-start; gap: 12px; }
+.yard__tiles figure { min-width: 0; margin: 0; border-radius: 22px; overflow: hidden; }
+.yard__tiles img { display: block; width: 100%; height: auto; }
+.yard__tiles video { border-radius: 0; }
+.yard__tag { position: relative; }
+.yard__tag figcaption { position: absolute; left: 12px; bottom: 12px; max-width: calc(100% - 24px); padding: 8px 14px; border-radius: 999px; font-size: 12px; font-weight: 500; line-height: 1.3; color: var(--white); background: var(--glass); border: 1px solid var(--glass-line); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+/* видео со звуком по клику */
+.vplay { position: relative; cursor: pointer; }
+.vplay__btn { position: absolute; left: 50%; top: 50%; display: grid; place-items: center; width: 64px; height: 64px; padding: 0; border: 1px solid var(--glass-line); border-radius: 50%; background: rgba(18, 20, 16, .32); color: var(--white); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transform: translate(-50%, -50%); cursor: pointer; transition: opacity .25s, transform .25s, background .25s; }
+.vplay__btn svg { width: 22px; height: 22px; margin-left: 3px; }
+.vplay:hover .vplay__btn { background: var(--wine); transform: translate(-50%, -50%) scale(1.06); }
+.vplay.is-playing .vplay__btn { opacity: 0; pointer-events: none; }
+.vplay__btn:focus-visible { outline: 2px solid var(--white); outline-offset: 3px; }
+@media (max-width: 1000px) { .yard__kitchen-text { grid-template-columns: 1fr; } }
+@media (max-width: 700px) {
+  .tours__row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .yard__tiles { flex-wrap: wrap; }
+  .yard__tiles figure { flex: 0 0 calc(50% - 6px) !important; aspect-ratio: 3 / 4; }
+  .yard__tiles img, .yard__tiles video { height: 100%; object-fit: cover; aspect-ratio: auto; }
+}.yard .head h2 { color: var(--sand); }
+.yard .head p span { color: var(--sand); }
+.yard__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 96px); margin-top: clamp(48px, 8vh, 88px); align-items: start; }
+.yard__photos { display: grid; grid-template-columns: 1.15fr 1fr; gap: 14px; }
+.yard__photos figure { margin: 0; border-radius: 22px; overflow: hidden; }
+.yard__photos img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.yard__garden { grid-column: 1 / 3; aspect-ratio: 16 / 10; }
+.yard__facade { aspect-ratio: 5 / 4; }
+.yard__facade img { object-position: 50% 0; }
+.yard__voice { display: flex; flex-direction: column; justify-content: space-between; gap: 14px; padding: 20px; border-radius: 22px; background: var(--glass); border: 1px solid var(--glass-line); font-size: 14px; line-height: 1.55; }
+.yard__voice b { font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--sand); }
+.yard .lede { color: rgba(255, 255, 255, .75); margin-top: 0; }
+.yard .list li::before { color: var(--sand); }
+.yard .list span { color: rgba(255, 255, 255, .62); }
+
+/* ---------- Горячий Ключ: фото-лента с волнистыми краями, как в сторис ---------- */
+.band { position: relative; height: clamp(260px, 38vw, 520px); margin-top: clamp(48px, 8vh, 88px); overflow: hidden; border-radius: 0 0 40px 40px; }
+.band + .cta-wrap { margin-bottom: clamp(24px, 4vh, 48px); }
+.map-wrap { display: flex; flex-direction: column; }
+.map-wrap .map { flex: 1; }
+.band img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; display: block; }
+.band svg { position: absolute; left: 0; width: 100%; height: clamp(36px, 6vw, 90px); color: var(--page); }
+.band__top { top: -1px; }
+.band__bot { bottom: -1px; transform: scaleY(-1); }
+.band__cap { position: absolute; left: calc(var(--side) + 10px); bottom: clamp(48px, 8vw, 110px); color: var(--white); font-size: clamp(15px, 1.4vw, 19px); max-width: 380px; line-height: 1.4; margin: 0; padding: 18px 22px; border-radius: 22px; background: rgba(18, 20, 16, .5); border: 1px solid var(--glass-line); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.places { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 36px clamp(20px, 2.6vw, 40px); margin: clamp(48px, 8vh, 80px) 0 0; padding: 0; list-style: none; }
+.places li { padding: 0; }
+.places em { display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: 999px; background: rgba(123, 45, 58, .08); color: var(--wine); font-style: normal; font-size: 12px; font-weight: 500; }
+.places b { display: block; margin-top: 14px; font-size: 17px; font-weight: 500; line-height: 1.25; }
+.places span { display: block; margin-top: 6px; font-size: 13px; line-height: 1.5; color: #6c6d66; }
+.city__story { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 38%); gap: clamp(40px, 8vw, 120px); align-items: center; margin-top: clamp(72px, 12vh, 130px); }
+.city__arch { position: relative; width: min(100%, 400px); margin: 0 16px 0 auto; }
+
+.city__arch div { aspect-ratio: 1; border-radius: 22px; overflow: hidden; }
+.city__arch img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ---------- отзывы ---------- */
+.reviews__body { display: grid; grid-template-columns: minmax(260px, 30%) minmax(0, 1fr); gap: clamp(20px, 3vw, 40px); margin-top: clamp(48px, 8vh, 88px); align-items: stretch; }
+.score { display: flex; flex-direction: column; justify-content: space-between; gap: 28px; padding: clamp(24px, 3vw, 36px); border-radius: 22px; background: var(--sand); }
+.score b { display: block; margin-bottom: 22px; font-size: clamp(80px, 9vw, 130px); font-weight: 300; line-height: .85; letter-spacing: -.04em; }
+.score__stars { display: flex; gap: 6px; color: var(--wine); }
+.score__stars svg { width: 18px; height: 18px; }
+.score p { margin: 10px 0 0; font-size: 15px; }
+.score .score__note { margin: auto 0 0; font-size: clamp(20px, 1.8vw, 26px); font-weight: 300; line-height: 1.35; color: var(--ink); }
+.score__note span { color: var(--wine); }
+.score .text-link { color: var(--ink); border-bottom-color: rgba(35, 36, 31, .35); align-self: flex-start; }
+.stories { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 20px); margin: 0; padding: 0; list-style: none; }
+.stories li { display: flex; flex-direction: column; padding: 24px 22px 22px; border-radius: 22px; background: rgba(255, 255, 255, .5); border: 1px solid rgba(255, 255, 255, .8); box-shadow: 0 10px 30px rgba(60, 45, 25, .06); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.stories li::before { content: "“"; height: 30px; font-size: 52px; line-height: 1; color: var(--wine); }
+.stories small { order: -1; align-self: flex-start; margin-bottom: 14px; padding: 5px 12px; border-radius: 999px; background: rgba(179, 144, 90, .16); color: #5a4a35; font-size: 11px; font-weight: 500; }.stories b { display: block; margin-top: 10px; font-size: 17px; font-weight: 500; line-height: 1.3; }
+.stories p { margin: 10px 0 0; flex: 1; font-size: 14px; line-height: 1.6; color: #55564f; }
+.stories cite { display: flex; align-items: center; gap: 10px; margin-top: 18px; font-style: normal; font-size: 12px; font-weight: 500; color: var(--gold); }
+.stories cite::before { content: ""; width: 24px; height: 1px; background: var(--gold); }
+.chats { margin-top: clamp(56px, 9vh, 96px); }
+.chats__row { display: flex; align-items: flex-start; gap: clamp(14px, 1.6vw, 20px); margin-top: 28px; }
+.chats__row a { display: block; min-width: 0; border-radius: 22px; overflow: hidden; box-shadow: 0 14px 36px rgba(60, 45, 25, .12); transition: transform .3s; }
+.chats__row a:hover { transform: translateY(-4px); }
+.chats__row img { display: block; width: 100%; height: auto; }
+@media (max-width: 700px) { .chats__row { flex-direction: column; } .chats__row a { flex: none !important; width: 100%; } }
+/* ---------- как добраться и бронь ---------- */
+.route__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(32px, 5vw, 80px); margin-top: clamp(48px, 8vh, 88px); align-items: stretch; }
+.contacts { margin: 0; padding: 0; list-style: none; }
+.contacts li { display: grid; grid-template-columns: 120px 1fr; gap: 16px; padding: 16px 0; border-top: 1px solid rgba(35, 36, 31, .08); font-size: 15px; line-height: 1.5; }
+.contacts li:first-child { border-top: 0; padding-top: 0; }
+.contacts dt, .contacts small { font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--grey); padding-top: 3px; }
+.contacts a { border-bottom: 1px solid rgba(35, 36, 31, .25); }
+.contacts a:hover { border-bottom-color: var(--ink); }
+.rule { margin-top: 28px; padding: 22px 24px; border-radius: 22px; background: var(--white); border: 1px solid rgba(179, 144, 90, .35); }
+.rule b { display: block; font-size: 16px; font-weight: 500; }
+.rule b span { color: var(--wine); }
+.rule p { margin: 8px 0 0; font-size: 14px; line-height: 1.6; color: #55564f; }
+.route__btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.map { position: relative; min-height: 420px; border-radius: 22px; overflow: hidden; background: #e7e3dc; }
+.map__link { position: absolute; inset: 0; display: block; }
+.map__link img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s cubic-bezier(.2, .7, .1, 1); }
+.map__link:hover img { transform: scale(1.03); }
+
+.foot { position: relative; isolation: isolate; overflow: hidden; padding: clamp(56px, 9vh, 96px) var(--side) 36px calc(var(--side) + 10px); border-top: 1px solid rgba(179, 144, 90, .35); font-size: 12.5px; color: var(--grey); }
+.foot__top { display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center; }
+.foot__name { font-size: clamp(40px, 6vw, 84px); font-weight: 300; line-height: .9; letter-spacing: -.04em; color: var(--wine); }
+.foot__nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.foot__nav a { height: 44px; display: inline-flex; align-items: center; padding: 0 20px; border-radius: 999px; background: rgba(179, 144, 90, .14); color: #5a4a35; font-size: 14px; transition: background .2s, color .2s; }
+.foot__nav a:hover { background: var(--wine); color: var(--white); }
+.foot__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 32px; margin-top: clamp(48px, 8vh, 80px); padding-top: 24px; }
+.foot__bottom a { border-bottom: 1px solid rgba(141, 139, 135, .4); }
+.plant--foot-l { left: clamp(-140px, -7vw, -60px); bottom: -90px; width: clamp(260px, 26vw, 420px); transform: rotate(10deg); }
+.plant--foot-r { right: clamp(-60px, -3vw, -20px); top: -30px; width: clamp(150px, 15vw, 240px); transform: rotate(-20deg); }
+.foot__top .pill { flex: none; }
+@media (max-width: 700px) { .plant--yard-left { width: 240px; left: -95px; bottom: 110px; } }
+@media (max-width: 700px) { .plant--foot-l { width: 200px; left: -90px; bottom: -70px; } .plant--foot-r { width: 110px; right: -30px; } }
+
+/* появление при прокрутке */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .9s ease, transform .9s cubic-bezier(.2, .7, .1, 1); }
+.reveal.is-in { opacity: 1; transform: none; }
+
+/* ---------- планшет ---------- */
+@media (max-width: 1100px) {
+  .nav__links { display: none; }
+  .nav { gap: 8px; padding: 0 7px; }
+  .nav__call, .burger { display: grid; }
+  .burger { order: -1; margin-right: auto; }
+  h1 .row > .title__tag { display: none; }
+  .title__tag--m { display: block; margin: 16px 0 0 4px; }
+  .points { grid-template-columns: repeat(2, 1fr); row-gap: 24px; }
+  .points li:nth-child(3) { padding-left: 0; border-left: 0; }
+  .about__body { grid-template-columns: 1fr; }
+  .about__media { justify-self: center; margin: 16px auto 0; }
+  .rooms__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* планшет: карточка выше, листочек меньше — не заходит на текст */
+  .room--ask { min-height: 600px; }
+  .plant--leaf { left: 8%; bottom: -84px; width: min(115%, 420px); }
+  .inroom, .yard__body, .city__story, .reviews__body, .route__body { grid-template-columns: 1fr; }
+  .inroom__media { justify-self: center; margin-bottom: 36px; }
+  .city__arch { margin: 0 auto; }
+  .places { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* выпадающее меню */
+.drawer { display: none; }
+.drawer.is-open { display: flex; flex-direction: column; position: fixed; z-index: 49; top: 92px; left: var(--side); right: var(--side); padding: 8px 22px; border-radius: 26px; background: rgba(242, 240, 236, .94); color: var(--ink); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.drawer a { padding: 13px 0; font-size: 15px; }
+.drawer a + a { border-top: 1px solid rgba(35, 36, 31, .12); }
+
+/* ---------- телефон ---------- */
+@media (max-width: 640px) {
+  .hero { height: auto; min-height: 0; max-height: none; padding: 112px var(--side) 104px; border-radius: 0 0 30px 30px; display: flex; flex-direction: column; }
+  .nav { top: 16px; height: 56px; }
+  .nav__btn { padding: 0 16px; font-size: 12.5px; height: 40px; }
+  h1 { font-size: clamp(54px, 17vw, 84px); }
+  h1 .row:nth-child(2) > span { padding-left: .3em; }
+  .lead { margin-top: 16px; max-width: none; }
+  .side { order: 3; align-self: stretch; flex-direction: row; margin-top: 26px; }
+  /* на телефоне у всех трёх карточек одна высота и одна линия цифр; «от» в строку, стрелка вниз справа */
+  .stat { flex: 1; height: 104px; padding: 14px 12px; border-radius: 18px; }
+  .stat span { font-size: 11.5px; }
+  .stat b, .stat--sand b { font-size: 24px; }
+  .stat--sand small { display: inline; margin: 0 3px 0 0; font-size: 11px; }
+  /* «₽» рядом с ценой не помещается — «₽ за ночь» сразу под ценой, стрелка отдельно внизу */
+  .stat--sand { justify-content: flex-start; gap: 6px; }
+  .stat--sand b .rub { display: none; }
+  .stat--sand .rub-m { display: inline; }
+  .stat--sand i { top: auto; bottom: 10px; right: 10px; width: 24px; height: 24px; }
+  .stat--sand i svg { width: 12px; height: 12px; }
+  .hero { padding-bottom: 92px; }
+  .points { order: 4; margin-top: 30px; }
+  .points li { padding: 2px 0 2px 16px; }
+  .points b { font-size: 14px; }
+  .points span { font-size: 12px; }
+  :root { --cta-h: 54px; }
+  .cta { padding-left: 22px; }
+  .cta__arrow { width: 42px; height: 42px; }
+  .head { grid-template-columns: 1fr; gap: 18px; }
+    .rooms__grid, .stories, .list { grid-template-columns: 1fr; }
+  .inroom__media { width: calc(100% - 32px); }
+  .inroom__round { right: -16px; }
+  .yard { margin: 0; border-radius: 30px; }
+  .yard__photos { grid-template-columns: 1fr; }
+  .yard__garden { grid-column: auto; }
+  .band { border-radius: 0 0 30px 30px; }
+  .band__cap { bottom: auto; top: 56px; max-width: 70%; }
+  .places { grid-template-columns: 1fr; gap: 24px; }
+  .city__arch { width: calc(100% - 32px); }
+  .contacts li { grid-template-columns: 1fr; gap: 4px; }
+  .map { min-height: 320px; }
+  .pill { flex: 1 1 100%; }
+  .plant--euca, .plant--branch { display: none; }
+  .room--ask { min-height: 540px; }
+  .room--ask.room--video { min-height: 0; }
+  .room--ask .pill { flex: none; align-self: center; }
+  /* на узком телефоне как было (150% карточки), на широком — не крупнее 520px и по той же оси */
+  .plant--leaf { left: calc(65% - min(75%, 260px)); bottom: -90px; width: min(150%, 520px); }
+  .plant--olive { width: 96px; right: -22px; top: -10px; }
+  /* на телефоне жасмин крупнее и выше — закрывает пустое место справа от последнего фото */
+  .plant--jasmine { bottom: -40px; right: -60px; width: 330px; transform: rotate(-12deg); }  .plant--sprig { bottom: -40px; right: clamp(-140px, -7vw, -70px); width: clamp(220px, 21vw, 320px); transform: rotate(-20deg); opacity: .85; }
+  .about__body { margin-top: 40px; }
+  .nums { display: grid; grid-template-columns: repeat(3, auto); justify-content: space-between; gap: 14px; }
+  .nums b { font-size: 26px; }
+  .nums span { font-size: 11.5px; }
+  .about__media { width: calc(100% - 16px); margin-right: 0; }
+  .about__quote { font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- общий векторный элемент: волны фона -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="waves">
+      <path d="M0 120C240 40 420 200 720 130S1180 30 1440 110V190C1180 110 980 250 720 210S240 120 0 200Z" fill="#ebe8e2"/>
+      <path d="M0 290C260 220 460 370 760 300S1200 210 1440 280V350C1200 290 1000 420 760 380S260 300 0 370Z" fill="#ebe8e2" opacity=".7"/>
+    </g>
+  </defs>
+</svg>
+
+<nav class="nav" aria-label="Главное меню">
+    <div class="nav__links">
+      <a href="#top">Главная</a>
+      <a href="#about">О нас</a>
+      <a href="#rooms">Номера</a>
+      <a href="#yard">Двор и сад</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#route">Как добраться</a>
+    </div>
+    <a class="nav__call" href="tel:+79183919805" aria-label="Позвонить: +7 918 391-98-05">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>
+    </a>
+    <a class="nav__btn" href="https://reservationsteps.ru/rooms/index/146994b9-af45-4721-a320-552659c9db8f?lang=ru" target="_blank" rel="noopener">Забронировать</a>
+    <button class="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="drawer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 9h16M4 15h16"/></svg>
+    </button>
+  </nav>
+  <div class="drawer" id="drawer">
+    <a href="#about">О нас</a>
+    <a href="#rooms">Номера</a>
+    <a href="#yard">Двор и сад</a>
+    <a href="#reviews">Отзывы</a>
+    <a href="#route">Как добраться</a>
+    <a href="tel:+79183919805">+7 918 391-98-05</a>
+  </div>
+
+<header class="hero" id="top">
+  <img class="hero__img" src="img/house.webp" alt="Гостевой дом на улице Лермонтова, 68Б в Горячем Ключе">
+  <img class="cloud cloud--sky" src="img/plants/cloud.webp" alt="" aria-hidden="true">
+  <img class="hero__img hero__img--front" src="img/house-cut.webp" alt="" aria-hidden="true">
+
+
+
+  <div class="title">
+    <h1>
+      <span class="row"><span>дом для</span><span class="title__tag">гостевой дом<br>в Горячем Ключе</span></span>
+      <span class="row"><span>гостей</span></span>
+    </h1>
+    <p class="title__tag title__tag--m">гостевой дом в Горячем Ключе</p>
+    <p class="lead">Не как в гостинице, а как в хорошем доме, где вас ждут</p>
+  </div>
+
+  <div class="side">
+    <div class="stat"><b>5,0</b><span>рейтинг<br>гостей</span></div>
+    <div class="stat"><b>151</b><span>отзыв<br>на Яндексе</span></div>
+    <a class="stat stat--sand" href="#rooms" aria-label="Выбрать номер: от 1 500 ₽ за ночь">
+      <b><small>от</small>1 500<span class="rub"> ₽</span></b><span><span class="rub-m">₽ </span>за ночь</span>
+      <i aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></i>
+    </a>
+  </div>
+
+  <ul class="points">
+    <li><em>/01</em><b>Свой санузел</b><span>в каждом номере</span></li>
+    <li><em>/02</em><b>Тихий двор</b><span>с садом и цветами</span></li>
+    <li><em>/03</em><b>Парковка</b><span>во дворе у дома</span></li>
+    <li><em>/04</em><b>Мини-кухня</b><span>на этаже</span></li>
+  </ul>
+
+</header>
+
+<div class="cta-wrap">
+  <span class="notch" aria-hidden="true"></span>
+  <a class="cta" href="https://reservationsteps.ru/rooms/index/146994b9-af45-4721-a320-552659c9db8f?lang=ru" target="_blank" rel="noopener">
+    Забронировать отдых
+    <span class="cta__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+  </a>
+</div>
+<section class="about" id="about">
+  <img class="plant plant--olive" src="img/plants/olive.webp" alt="" aria-hidden="true" loading="lazy">
+  <svg class="waves" viewBox="0 0 1440 480" preserveAspectRatio="none" aria-hidden="true"><use href="#waves"/></svg>
+
+  <div class="head">
+    <h2>о доме</h2>
+    <p>Мы принимаем гостей в своём <span>доме</span>: чистые номера, тихий двор, <span>хозяева</span> рядом</p>
+  </div>
+
+  <div class="about__body">
+    <div class="about__text reveal">
+      <h3>Здравствуйте! Меня зовут <span>Людмила</span></h3>
+      <p>В гостеприимстве я работаю с 1997 года. Опыт получила в отелях от 3 до 5 звёзд за границей и именно там поняла: гостям важны не только комфорт и чистота, но и тёплая, спокойная атмосфера.</p>
+      <p>Потом мы с мужем Александром построили свой небольшой гостевой дом и уже 16 лет с любовью принимаем гостей со всей страны. Каждый день сами следим за чистотой и уютом, чтобы отдых у нас был спокойным, комфортным и безопасным. <a class="text-link" href="#rooms">Посмотреть номера <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+      <ul class="nums">
+        <li><b>1997</b><span>начало пути<br>в гостеприимстве</span></li>
+        <li><b>16 лет</b><span>принимаем гостей<br>в своём доме</span></li>
+        <li><b>151</b><span>отзыв<br>с оценкой 5,0</span></li>
+      </ul>
+    </div>
+
+    <figure class="about__media reveal">
+      <div class="about__pics">
+        <div class="about__arch"><img src="img/lyudmila.webp" alt="Людмила, хозяйка гостевого дома, с розой у реки" loading="lazy"></div>
+        <div class="about__arch about__arch--sm"><img src="img/lyudmila-2.webp" alt="Людмила на прогулке в лесу" loading="lazy"></div>
+      </div>
+    </figure>
+  </div>
+  <blockquote class="about__quote">
+    Для нас важно, чтобы вы чувствовали себя не как в гостинице, а как в хорошем доме, где вас ждут с теплом и уважением.
+    <cite>Людмила и Александр</cite>
+  </blockquote>
+</section>
+
+<!-- ================= номера ================= -->
+<section class="sec rooms" id="rooms">
+  <svg class="waves" viewBox="0 0 1440 480" preserveAspectRatio="none" aria-hidden="true"><use href="#waves"/></svg>
+
+  <div class="head">
+    <h2>номера</h2>
+    <p>Четыре вида номеров на 1–3 гостей:<br><span>свой санузел</span>, <span>от 1 500 ₽</span> за ночь</p>
+  </div>
+
+  <div class="rooms__grid">
+    <article class="room reveal">
+      <div class="room__img">
+        <div class="gal">
+          <img src="img/single-bed.webp" alt="Одноместный номер: кровать 80×200, тумбочка и кондиционер" loading="lazy">
+          <img src="img/single-room.webp" alt="Вешалка с зеркалом, холодильник и окно" loading="lazy">
+          <img src="img/single-wardrobe.webp" alt="Шкаф, столик с зеркалом и стул" loading="lazy">
+          <img src="img/single-shower.webp" alt="Душевая и раковина" loading="lazy">
+        </div>
+        <em>/01</em>
+        <span class="gal__count">1 / 4</span>
+        <button class="gal__btn gal__btn--prev" type="button" aria-label="Предыдущее фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <button class="gal__btn gal__btn--next" type="button" aria-label="Следующее фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+      <div class="cta-wrap cta-wrap--rep cta-wrap--sm"><span class="notch" aria-hidden="true"></span><a class="cta" href="https://reservationsteps.ru/rooms/index/146994b9-af45-4721-a320-552659c9db8f?lang=ru" target="_blank" rel="noopener">Выбрать даты <span class="cta__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></div>
+      <div class="room__body">
+        <h3>Одноместный</h3>
+        <p>9 м², кровать 80×200. Своя душевая и туалет, шкаф, холодильник, чайник и чайный набор.</p>
+        <ul class="tags"><li>1 гость</li><li>9 м²</li><li>Кровать 80×200</li><li>Кондиционер</li></ul>
+        <div class="room__foot">
+          <div class="room__price"><b>1 500 ₽</b><span>за ночь</span></div>
+        </div>
+      </div>
+    </article>
+    <article class="room reveal">
+      <div class="room__img">
+        <div class="gal">
+          <img src="img/econom-bed.webp" alt="Двухместный эконом: кровать 140×200 и декоративное окно над изголовьем" loading="lazy">
+          <img src="img/econom-pillows.webp" alt="Кровать с белым хлопковым бельём" loading="lazy">
+          <img src="img/econom-shower.webp" alt="Душевая и раковина" loading="lazy">
+          <img src="img/econom-kit.webp" alt="Стаканы, гель для душа и шампунь" loading="lazy">
+          <img src="img/econom-sink.webp" alt="Раковина, зеркало и фен" loading="lazy">
+          <img src="img/econom-wc.webp" alt="Туалет с окном, фен" loading="lazy">
+        </div>
+        <em>/02</em>
+        <span class="gal__count">1 / 6</span>
+        <button class="gal__btn gal__btn--prev" type="button" aria-label="Предыдущее фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <button class="gal__btn gal__btn--next" type="button" aria-label="Следующее фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+      <div class="cta-wrap cta-wrap--rep cta-wrap--sm"><span class="notch" aria-hidden="true"></span><a class="cta" href="https://reservationsteps.ru/rooms/index/146994b9-af45-4721-a320-552659c9db8f?lang=ru" target="_blank" rel="noopener">Выбрать даты <span class="cta__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></div>
+      <div class="room__body">
+        <h3>Двухместный эконом</h3>
+        <p>12 м², кровать 140×200. Своя душевая и туалет, холодильник, сплит-система, телевизор. На этаже мини-кухня.</p>
+        <ul class="tags"><li>2 гостя</li><li>12 м²</li><li>Кровать 140×200</li><li>Кондиционер</li></ul>
+        <div class="room__foot">
+          <div class="room__price"><b>1 800 ₽</b><span>за ночь</span></div>
+        </div>
+      </div>
+    </article>
+    <article class="room reveal">
+      <div class="room__img">
+        <div class="gal">
+          <img src="img/double-1-bed.webp" alt="Двухместный номер: двуспальная кровать, картина и бра" loading="lazy">
+          <img src="img/double-2-bed.webp" alt="Двухместный номер с кроватью у окна" loading="lazy">
+          <img src="img/double-twin.webp" alt="Двухместный номер с двумя раздельными кроватями" loading="lazy">
+          <img src="img/double-twin-room.webp" alt="Две раздельные кровати, столик со стульями, телевизор и кондиционер" loading="lazy">
+          <img src="img/double-room.webp" alt="Столик со стульями, телевизор, кондиционер и вход в санузел" loading="lazy">
+          <img src="img/double-wc.webp" alt="Душевая и туалет, полка с полотенцами" loading="lazy">
+          <img src="img/double-sink.webp" alt="Раковина, фен и зубные наборы" loading="lazy">
+        </div>
+        <em>/03</em>
+        <span class="gal__count">1 / 7</span>
+        <button class="gal__btn gal__btn--prev" type="button" aria-label="Предыдущее фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <button class="gal__btn gal__btn--next" type="button" aria-label="Следующее фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+      <div class="cta-wrap cta-wrap--rep cta-wrap--sm"><span class="notch" aria-hidden="true"></span><a class="cta" href="https://reservationsteps.ru/rooms/index/146994b9-af45-4721-a320-552659c9db8f?lang=ru" target="_blank" rel="noopener">Выбрать даты <span class="cta__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></div>
+      <div class="room__body">
+        <h3>Двухместный</h3>
+        <p>14–16 м². Одна двуспальная кровать или две раздельные — укажите при бронировании, матрасы жёсткие. Своя душевая и туалет, кондиционер. Дополнительных мест нет.</p>
+        <ul class="tags"><li>2 гостя</li><li>14–16 м²</li><li>Кровати на выбор</li><li>Кондиционер</li></ul>
+        <div class="room__foot">
+          <div class="room__price"><b>2 000 ₽</b><span>за ночь</span></div>
+        </div>
+      </div>
+    </article>
+    <article class="room reveal">
+      <div class="room__img">
+        <div class="gal">
+          <img src="img/triple-beds.webp" alt="Трёхместный номер: раздельные кровати, холодильник и чайник" loading="lazy">
+          <img src="img/triple-room.webp" alt="Кровать, диван, два кресла и столик" loading="lazy">
+          <img src="img/triple-sofa.webp" alt="Диван, кресла и торшер у окна" loading="lazy">
+          <img src="img/triple-bath.webp" alt="Санузел: раковина, фен и зубные наборы" loading="lazy">
+        </div>
+        <em>/04</em>
+        <span class="gal__count">1 / 4</span>
+        <button class="gal__btn gal__btn--prev" type="button" aria-label="Предыдущее фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <button class="gal__btn gal__btn--next" type="button" aria-label="Следующее фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+      <div class="cta-wrap cta-wrap--rep cta-wrap--sm"><span class="notch" aria-hidden="true"></span><a class="cta" href="https://reservationsteps.ru/rooms/index/146994b9-af45-4721-a320-552659c9db8f?lang=ru" target="_blank" rel="noopener">Выбрать даты <span class="cta__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></div>
+      <div class="room__body">
+        <h3>Трёхместный</h3>
+        <p>21,8 м². Двуспальная и односпальная кровати или три раздельные — на выбор. Диван, два кресла и столик, холодильник и чайник. Своя душевая и туалет.</p>
+        <ul class="tags"><li>3 гостя</li><li>21,8 м²</li><li>Кровати на выбор</li><li>Кондиционер</li></ul>
+        <div class="room__foot">
+          <div class="room__price"><b>2 500 ₽</b><span>за ночь</span></div>
+        </div>
+      </div>
+    </article>
+    <article class="room room--ask room--video reveal">
+      <b>Номера на видео</b>
+      <p>Видеообзоры всех номеров — в нашем канале в Max. Посмотрите обстановку до бронирования.</p>
+      <a class="pill" href="https://max.ru/join/SC7_tH3dF6UFAtcvpeLPa9PE9JmQ7zAaJKbSbZFe3xU" target="_blank" rel="noopener">Смотреть в Max <i aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></a>
+    </article>
+    <article class="room room--ask reveal">
+      <b>Не знаете, какой номер выбрать?</b>
+      <p>Позвоните или напишите в Max — подскажу номер под ваши даты и компанию. Если нужный занят, предложу другой или ближайшие свободные даты.</p>
+      <a class="pill" href="tel:+79183919805">+7 918 391-98-05 <i aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></a>
+      <img class="plant plant--leaf" src="img/plants/sprig.webp" alt="" aria-hidden="true" loading="lazy">
+    </article>
+  </div>
+  <div class="inroom">
+  <img class="plant plant--euca" src="img/plants/eucalyptus.webp" alt="" aria-hidden="true" loading="lazy">
+    <figure class="inroom__media reveal" style="margin-top:0">
+      <div class="inroom__arch"><img src="img/twin-close.webp" alt="Постельное бельё из хлопка на кроватях" loading="lazy"></div>
+      <div class="inroom__round"><img src="img/towels.webp" alt="Свежие махровые полотенца на полке" loading="lazy"></div>
+    </figure>
+    <div class="reveal">
+      <h3 class="sub">Что есть <span>в номере</span></h3>
+      <p class="lede">Мебель выбирала по опыту работы в отелях 3–5 звёзд: всё практичное, удобное и такое, каким я сама люблю его видеть в хороших гостиницах.</p>
+      <ul class="list">
+        <li><div><b>Кровати-трансформеры</b><span>одна большая или две отдельные</span></div></li>
+        <li><div><b>Новые жёсткие матрасы</b><span>2026 года, ваша спина скажет спасибо</span></div></li>
+        <li><div><b>Бельё из 100% хлопка</b><span>стираю и глажу сама</span></div></li>
+        <li><div><b>Кондиционер и тёплый пол</b><span>уютно в любое время года</span></div></li>
+        <li><div><b>Холодильник, ТВ и фен</b><span>и вместительный шкаф</span></div></li>
+        <li><div><b>Скоростной интернет</b><span>Wi-Fi по всему дому</span></div></li>
+        <li><div><b>Своя душевая и туалет</b><span>мягкие полотенца и тапочки</span></div></li>
+        <li><div><b>Наборы для душа</b><span>шампунь, гель, зубной набор</span></div></li>
+        <li><div><b>Питьевая вода</b><span>для чайника всегда есть</span></div></li>
+        <li><div><b>Две запасные подушки</b><span>ждут вас в шкафу</span></div></li>
+      </ul>
+      <blockquote class="note-quote">Уборка у нас по требованию, но, признаюсь честно, я редко могу пройти мимо: незаметно подмету, заменю полотенца на свежие, уберу пыль.<cite>Людмила</cite></blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ================= двор ================= -->
+<section class="yard" id="yard">
+  <img class="plant plant--jasmine" src="img/plants/jasmine.webp" alt="" aria-hidden="true" loading="lazy">
+  <div class="head">
+    <h2>двор и сад</h2>
+    <p>Тихий частный сектор, <span>свой сад</span> с цветами и всё, чтобы отдых не зависел от <span>случайностей</span></p>
+  </div>
+
+  <div class="yard__body">
+    <img class="plant plant--yard-left" src="img/plants/branch.webp" alt="" aria-hidden="true" loading="lazy">
+    <div class="reveal">
+      <p class="lede">Вокруг одно- и двухэтажные дома, вдали от многоэтажек и ночных развлечений. Наши соседи, как и мы, ценят тишину и уют.</p>
+      <ul class="list">
+        <li><div><b>Родниковая вода</b><span>свой колодец: горячая и холодная вода всегда</span></div></li>
+        <li><div><b>Резервный генератор</b><span>при отключении света комфорт остаётся</span></div></li>
+        <li><div><b>Видеонаблюдение</b><span>по периметру двора, у входов и на улице</span></div></li>
+        <li><div><b>Парковка</b><span>во дворе, под видеонаблюдением</span></div></li>
+        <li><div><b>Место для курения</b><span>под навесом, в любую погоду</span></div></li>
+        <li><div><b>Сад и клумбы</b><span>хосты, гортензии, петунии</span></div></li>
+      </ul>
+    </div>
+    <div class="yard__photos reveal">
+      <figure class="yard__garden"><img src="img/garden.jpg" alt="Сад во дворе: клумбы с гортензиями, петуниями и хостами" loading="lazy"></figure>
+      <figure class="yard__facade"><img src="img/facade.webp" alt="Дом на улице Лермонтова, 68Б: балкон и табличка с адресом" loading="lazy"></figure>
+      <div class="yard__voice"><b>Звуки двора</b>По утрам — пение птиц, соседский петух и мурлыканье нашего кота Персика. Вечером — сверчки, а иногда по клумбе шуршит ёжик.</div>
+    </div>
+  </div>
+  <div class="yard__kitchen reveal">
+    <div class="yard__kitchen-text">
+      <h3 class="sub">Летняя кухня <span>и мангал</span></h3>
+      <p class="lede">В летней кухне есть кондиционер, микроволновка, посуда и большой стол на всю компанию. Под навесом во дворе — мойка, мангал и столик: можно готовить самим, как дома.</p>
+    </div>
+    <div class="yard__tiles">
+      <figure style="flex: 750 1 0"><img src="img/yard-kitchen.jpg" width="1080" height="1440" alt="Летняя кухня: стол со скатертью, мойка, микроволновка и кондиционер" loading="lazy"></figure>
+      <figure style="flex: 1108 1 0"><img src="img/yard-sink.jpg" width="1080" height="975" alt="Мойка и столик под навесом во дворе, вдоль стены туи" loading="lazy"></figure>
+      <figure style="flex: 1469 1 0"><img src="img/yard-grill.jpg" width="1080" height="735" alt="Мангал с решёткой под навесом" loading="lazy"></figure>
+      <figure class="vplay" style="flex: 563 1 0"><video src="video/yard-walk.mp4" poster="video/yard-walk.jpg" playsinline preload="none" aria-label="Видео: прогулка по двору"></video></figure>
+    </div>
+  </div>
+  <div class="yard__kitchen reveal">
+    <div class="yard__kitchen-text">
+      <h3 class="sub">Двор <span>и его жители</span></h3>
+      <p class="lede">Во дворе хватает места для машин, на балконе — уголок для курения со столиком. А встречать вас будут наши любимые питомцы.</p>
+    </div>
+    <div class="yard__tiles">
+      <figure class="yard__tag" style="flex: 750 1 0"><img src="img/yard-parking.webp" width="1440" height="1920" alt="Машины гостей на плиточной площадке во дворе" loading="lazy"></figure>
+      <figure class="yard__tag" style="flex: 750 1 0"><img src="img/yard-balcony.webp" width="1440" height="1920" alt="Балкон со столиком и двумя стульями, искусственная трава" loading="lazy"></figure>
+      <figure class="yard__tag" style="flex: 500 1 0"><img src="img/pet-parrot.webp" width="640" height="1280" alt="Попугай-корелла в клетке" loading="lazy"></figure>
+      <figure style="flex: 639 1 0"><img src="img/pet-spaniel.webp" width="874" height="1368" alt="Кокер-спаниель" loading="lazy"></figure>
+      <figure style="flex: 750 1 0"><img src="img/pet-dogs.webp" width="960" height="1280" alt="Две маленькие собаки на коврике у двери" loading="lazy"></figure>
+    </div>
+  </div></section>
+<div class="cta-wrap cta-wrap--rep">
+  <span class="notch" aria-hidden="true"></span>
+  <a class="cta" href="https://reservationsteps.ru/rooms/index/146994b9-af45-4721-a320-552659c9db8f?lang=ru" target="_blank" rel="noopener">
+    Забронировать отдых
+    <span class="cta__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+  </a>
+</div>
+
+<!-- ================= Горячий Ключ ================= -->
+<section class="sec city" id="city" style="padding-bottom:0">  <div class="head">
+    <h2>рядом</h2>
+    <p>Курортная зона Горячего Ключа: <span>река Псекупс</span>, сосновые аллеи, санатории и <span>целебная вода</span></p>
+  </div>
+</section>
+
+<div class="band">
+  <svg class="band__top" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H1440V36C1200 96 980 10 720 46S240 96 0 40Z" fill="currentColor"/></svg>
+  <img src="img/river-hd.jpg" alt="Река Псекупс среди леса в Горячем Ключе, вид со скалы" loading="lazy">
+  <p class="band__cap">Утро можно начать с прогулки к реке — она в нескольких кварталах от дома</p>
+</div>
+<div class="cta-wrap cta-wrap--rep">
+  <span class="notch" aria-hidden="true"></span>
+  <a class="cta" href="tel:+79183919805">
+    Позвонить Людмиле
+    <span class="cta__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+  </a>
+</div>
+
+<section class="sec city" style="padding-top:0">
+  <img class="plant plant--sprig" src="img/plants/sprig.webp" alt="" aria-hidden="true" loading="lazy">
+  <svg class="waves" viewBox="0 0 1440 480" preserveAspectRatio="none" aria-hidden="true"><use href="#waves"/></svg>
+  <ul class="places">
+    <li class="reveal"><em>в двух шагах</em><b>Санаторий «Русь»</b><span>Самый уютный и неспешный санаторий города</span></li>
+    <li class="reveal"><em>2 квартала</em><b>Аквазона с бассейном</b><span>Взрослый билет 1 000 ₽, детский вдвое дешевле, до 7 лет — бесплатно</span></li>
+    <li class="reveal"><em>2 квартала</em><b>Клиника Чаплыгиной</b><span>Приём ведёт сама доктор Чаплыгина — многие гости едут к нам ради неё</span></li>
+    <li class="reveal"><em>2 квартала</em><b>Природное джакузи</b><span>«Массажные ванночки» в Псекупсе — спуск непростой, но оно того стоит</span></li>
+    <li class="reveal"><em>3 минуты</em><b>Мастерская «Арт-гараж»</b><span>Мастер-классы по мозаике</span></li>
+    <li class="reveal"><em>4 квартала</em><b>Курортный парк</b><span>Живая музыка по вечерам и «Ванное здание» XIX века</span></li>
+    <li class="reveal"><em>прогулка</em><b>Аллея «1000 сосен»</b><span>Неспешно до фонтана у администрации и обратно</span></li>
+    <li class="reveal"><em>лес рядом</em><b>Терренкуры и водопады</b><span>Маршруты разной сложности, Руфабго и Хаджохская теснина</span></li>
+  </ul>
+
+  <div class="city__story">
+    <div class="reveal">
+      <h3 class="sub">Приезжайте <span>не проездом</span></h3>
+      <p class="lede">Горячий Ключ многие знают как остановку по пути к морю. Но те, кто задерживается хотя бы на несколько дней, открывают совсем другой отдых: санатории с процедурами по курсовкам, минеральные источники, лесные тропы и воздух без заводов и пробок.</p>
+      <p class="lede">Проснитесь, выпейте минеральной воды, прогуляйтесь по тенистым аллеям, посидите у реки — и позвольте себе пожить без спешки хотя бы несколько дней.</p>
+    </div>
+    <figure class="city__arch reveal"><div><img src="img/bridge.webp" alt="Подвесной мост через реку осенью, в красных листьях дикого винограда" loading="lazy"></div></figure>
+  </div>
+</section>
+
+<!-- ================= отзывы ================= -->
+<section class="sec reviews" id="reviews">
+  <img class="plant plant--branch" src="img/plants/branch.webp" alt="" aria-hidden="true" loading="lazy">
+  <svg class="waves" viewBox="0 0 1440 480" preserveAspectRatio="none" aria-hidden="true"><use href="#waves"/></svg>
+  <div class="head">
+    <h2>отзывы</h2>
+    <p>Гости <span>возвращаются</span> к нам годами — для нас это лучшая оценка</p>
+  </div>
+
+  <div class="reviews__body">
+    <div class="score reveal">
+      <div>
+        <b>5,0</b>
+        <div class="score__stars" aria-label="5 звёзд из 5">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6L12 16.8 6.6 19.6l1.1-6-4.5-4.2 6.1-.8Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6L12 16.8 6.6 19.6l1.1-6-4.5-4.2 6.1-.8Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6L12 16.8 6.6 19.6l1.1-6-4.5-4.2 6.1-.8Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6L12 16.8 6.6 19.6l1.1-6-4.5-4.2 6.1-.8Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6L12 16.8 6.6 19.6l1.1-6-4.5-4.2 6.1-.8Z"/></svg>
+        </div>
+        <p>151 отзыв на Яндекс Картах</p>
+      </div>
+      <p class="score__note">Чаще всего гости пишут о <span>чистоте</span>, <span>тишине</span> и <span>заботе</span> хозяйки — и о том, что хочется вернуться.</p>
+      <a class="text-link" href="https://yandex.ru/maps/?text=%D0%94%D0%BE%D0%BC%20%D0%B4%D0%BB%D1%8F%20%D0%B3%D0%BE%D1%81%D1%82%D0%B5%D0%B9%20%D0%93%D0%BE%D1%80%D1%8F%D1%87%D0%B8%D0%B9%20%D0%9A%D0%BB%D1%8E%D1%87%20%D0%9B%D0%B5%D1%80%D0%BC%D0%BE%D0%BD%D1%82%D0%BE%D0%B2%D0%B0%2068%D0%91" target="_blank" rel="noopener">Читать отзывы <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+    <ul class="stories">
+      <li class="reveal"><small>Яндекс Карты</small><b>«Уезжать не хотелось»</b><p>Бронирование моментальное, цена очень доступная. Уютно, красиво, душевно и со вкусом. Хозяйка Людмила — очень милая, приветливая, заботливая и деликатная. Жаль, что мы остановились всего на день.</p><cite>Гость</cite></li>
+      <li class="reveal"><small>Яндекс Карты</small><b>«Приедем ещё»</b><p>В номере душ, туалет, сплит, телевизор, вай-фай — всё есть. Летняя кухня и парковка во дворе. Приехали около 3 часов ночи — приняли без проблем. А ваши собачки вообще замечательные!</p><cite>Гость</cite></li>
+      <li class="reveal"><small>Яндекс Карты</small><b>«Всё продумано до мелочей»</b><p>Очень радушная хозяйка. Чистый, уютный номер со свежим постельным бельём, аккуратный ухоженный двор. Нам всё очень понравилось, даже рассматриваем вариант приехать на длительный срок.</p><cite>Гость</cite></li>
+    </ul>
+  </div>
+  <div class="chats">
+    <h3 class="sub">Пишут <span>в переписке</span></h3>
+    <div class="chats__row">
+      <a class="reveal" style="flex: 1158 1 0" href="img/reviews/chat-1.webp" target="_blank" rel="noopener"><img src="img/reviews/chat-1.webp" width="1320" height="1140" alt="Сообщение гостьи: «Были как будто дома, но как в раю… если в Горячий Ключ, то только к вам!»" loading="lazy"></a>
+      <a class="reveal" style="flex: 670 1 0" href="img/reviews/chat-2.webp" target="_blank" rel="noopener"><img src="img/reviews/chat-2.webp" width="1288" height="1920" alt="Сообщение гостей: благодарность за чистоту, уют и атмосферу, «мы обязательно приедем снова»" loading="lazy"></a>
+      <a class="reveal" style="flex: 1624 1 0" href="img/reviews/chat-3.jpg" target="_blank" rel="noopener"><img src="img/reviews/chat-3.jpg" width="1320" height="813" alt="Сообщение гостьи: «Мы у вас так отдохнули. Тишина, прям как раньше дома было»" loading="lazy"></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= как добраться и бронь ================= -->
+<section class="sec route" id="route">
+  <svg class="waves" viewBox="0 0 1440 480" preserveAspectRatio="none" aria-hidden="true"><use href="#waves"/></svg>
+  <div class="head">
+    <h2>как<br>добраться</h2>
+    <p>Горячий Ключ, <span>ул. Лермонтова, 68Б</span> — рядом трасса М4 «Дон»</p>
+  </div>
+
+  <div class="route__body">
+    <div class="reveal">
+      <ul class="contacts">
+        <li><small>Адрес</small><span>Краснодарский край, Горячий Ключ, ул. Лермонтова, 68Б</span></li>
+        <li><small>Бронь</small><span><a href="tel:+79183919805">+7 918 391-98-05</a>, Людмила<br>Позвоните или напишите в Max — обязательно отвечу</span></li>
+        <li><small>Парковка</small><span>Во дворе, а если места нет — на широкой улице у дома</span></li>
+      </ul>
+      <div class="rule">
+        <b>Кто первым подтвердил бронь, <span>за тем и номер</span></b>
+        <p>Я никогда не придерживаю номера: даты закрываются только после оформленной брони. Если нужный номер уже занят, обязательно предложу другой или ближайшие свободные даты.</p>
+      </div>
+      <div class="route__btns">
+        <a class="pill" href="https://reservationsteps.ru/rooms/index/146994b9-af45-4721-a320-552659c9db8f?lang=ru" target="_blank" rel="noopener">Забронировать онлайн <i aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></a>
+        <a class="pill pill--ghost" href="tel:+79183919805">Позвонить</a>
+      </div>
+    </div>
+    <div class="map-wrap reveal">
+      <div class="map">
+        <a class="map__link" href="https://yandex.ru/maps/org/dom_dlya_gostey/1346608446/" target="_blank" rel="noopener" aria-label="Открыть на Яндекс Картах: Горячий Ключ, ул. Лермонтова, 68Б"><img src="img/map.png" alt="Карта: Горячий Ключ, ул. Лермонтова, 68Б" loading="lazy"></a>
+      </div>
+      <div class="cta-wrap cta-wrap--rep">
+        <span class="notch" aria-hidden="true"></span>
+        <a class="cta" href="https://yandex.ru/maps/?text=%D0%93%D0%BE%D1%80%D1%8F%D1%87%D0%B8%D0%B9%20%D0%9A%D0%BB%D1%8E%D1%87%2C%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%20%D0%9B%D0%B5%D1%80%D0%BC%D0%BE%D0%BD%D1%82%D0%BE%D0%B2%D0%B0%2C%2068%D0%91" target="_blank" rel="noopener">
+          Построить маршрут
+          <span class="cta__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <img class="plant plant--foot-l" src="img/plants/eucalyptus.webp" alt="" aria-hidden="true" loading="lazy">
+  <img class="plant plant--foot-r" src="img/plants/olive.webp" alt="" aria-hidden="true" loading="lazy">
+  <div class="foot__top">
+    <b class="foot__name">Дом для гостей</b>
+    <nav class="foot__nav" aria-label="Навигация по сайту">
+      <a href="#top">Главная</a>
+      <a href="#about">О нас</a>
+      <a href="#rooms">Номера</a>
+      <a href="#yard">Двор и сад</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#route">Как добраться</a>
+    </nav>
+    <a class="pill" href="https://reservationsteps.ru/rooms/index/146994b9-af45-4721-a320-552659c9db8f?lang=ru" target="_blank" rel="noopener">Забронировать <i aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></a>
+  </div>
+  <div class="foot__bottom">
+    <span>© Дом для гостей, Горячий Ключ, ул. Лермонтова, 68Б</span>
+    <span>Прошли самооценку, реестровая запись <a href="https://tourism.fsa.gov.ru/ru/resorts/hotels/34d4e6f7-8f0d-11f0-ba20-af3ca657829f/about-resort" target="_blank" rel="noopener">C232025011592</a></span>
+    <a href="tel:+79183919805">+7 918 391-98-05</a>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const drawer = document.getElementById('drawer');
+  const burger = document.querySelector('.burger');
+  burger.addEventListener('click', () => {
+    const open = !drawer.classList.contains('is-open');
+    drawer.classList.toggle('is-open', open);
+    burger.setAttribute('aria-expanded', String(open));
+  });
+
+  const items = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { items.forEach(el => el.classList.add('is-in')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
+  }, { threshold: .2 });
+  items.forEach(el => io.observe(el));
+})();
+
+// шапка: тёмное стекло после первого экрана, чтобы читалась на светлых блоках
+(() => {
+  const nav = document.querySelector('.nav');
+  const hero = document.querySelector('.hero');
+  const stick = () => nav.classList.toggle('is-stuck', window.scrollY > hero.offsetHeight - 100);
+  window.addEventListener('scroll', stick, { passive: true });
+  stick();
+})();
+
+// видео: запуск со звуком по клику, играет только одно
+(() => {
+  const boxes = [...document.querySelectorAll('.vplay')];
+  const vids = boxes.map(b => b.querySelector('video'));
+  const icon = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></svg>';
+  boxes.forEach((box, i) => {
+    const v = vids[i];
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'vplay__btn';
+    btn.setAttribute('aria-label', 'Смотреть со звуком: ' + (v.getAttribute('aria-label') || 'видео').replace(/^Видео:\s*/, ''));
+    btn.innerHTML = icon;
+    box.appendChild(btn);
+    box.addEventListener('click', () => {
+      if (v.paused) {
+        vids.forEach(o => { if (o !== v) o.pause(); });
+        v.muted = false;
+        v.play().catch(() => {});
+      } else {
+        v.pause();
+      }
+    });
+    v.addEventListener('play', () => box.classList.add('is-playing'));
+    v.addEventListener('pause', () => box.classList.remove('is-playing'));
+    v.addEventListener('ended', () => { v.currentTime = 0; v.load(); });
+  });
+  // ушли со страницы видео — ставим на паузу
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) e.target.pause(); }), { threshold: .2 });
+    vids.forEach(v => io.observe(v));
+  }
+})();
+// листалка фото в карточке номера
+document.querySelectorAll('.gal').forEach(gal => {
+  const box = gal.parentElement;
+  const count = box.querySelector('.gal__count');
+  const prev = box.querySelector('.gal__btn--prev');
+  const next = box.querySelector('.gal__btn--next');
+  const total = gal.children.length;
+  const update = () => {
+    const i = Math.round(gal.scrollLeft / gal.clientWidth);
+    count.textContent = `${i + 1} / ${total}`;
+    prev.disabled = i === 0;
+    next.disabled = i === total - 1;
+  };
+  prev.addEventListener('click', () => gal.scrollBy({ left: -gal.clientWidth }));
+  next.addEventListener('click', () => gal.scrollBy({ left: gal.clientWidth }));
+  gal.addEventListener('scroll', update, { passive: true });
+  update();
+});
+</script>
+</body>
+</html>
